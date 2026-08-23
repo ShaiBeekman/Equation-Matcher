@@ -109,7 +109,7 @@ Depending on the configured expression length, a single search can evaluate mill
 - Formula deduplication
 - Configurable verification range
 - Configurable maximum expression length
-- Summandial and factorial sequence modes
+- Summandial (Gaussian sum) and factorial sequence modes
 - Four-phase live search progress
 - Interactive formula verification paths
 - Background computation with a responsive JavaFX interface
