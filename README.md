@@ -8,6 +8,14 @@ Rather than starting with a formula and calculating its values, Equation Matcher
 
 ![Equation Matcher](assets/screenshots/equation-matcher.png)
 
+## Download
+
+**Equation Matcher v1.0.0** is available as a standalone Windows application.
+
+Download the latest Windows installer from the **[Releases](../../releases/latest)** page.
+
+No separate Java installation is required.
+
 ## How It Works
 
 Equation Matcher performs formula discovery as a four-phase search.
@@ -161,7 +169,7 @@ mvn javafx:run
 
 Equation Matcher currently searches expressions constructed from numerical terms and the operators `+`, `-`, `*`, `/`, and `^`.
 
-The current implementation focuses on summandial and factorial sequences and uses a configurable finite verification range to determine whether a substitution pattern remains consistent.
+The current implementation focuses on the summandial sequence (the cumulative sums 1+2+⋯+n, commonly associated with the Gaussian sum) and the factorial sequence.
 
 A discovered formula should therefore be understood as a formula **verified across the configured search range**, rather than a mathematical proof that the identity holds for every possible value of `n`.
 
