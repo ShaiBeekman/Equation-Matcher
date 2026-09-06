@@ -1,0 +1,76 @@
+name: Verify exact release on clean Windows
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: GitHub release containing the already-built ZIP
+        required: true
+        default: v1.1.0-rc1
+        type: string
+      expected_sha256:
+        description: Required SHA-256 of the release ZIP (never rebuilt here)
+        required: true
+        default: 1E19FAE300E37DA503BFDE2363138562E8FF492D7BFD48D5E00081917AA88324
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out only workflow and verification scripts
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: /.github/
+          sparse-checkout-cone-mode: false
+      - name: Download exact published release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $asset = 'Equation-Matcher-v1.1.0-windows.zip'
+          $download = Join-Path $env:RUNNER_TEMP 'release-download'
+          New-Item -ItemType Directory -Force -Path $download | Out-Null
+          gh release download $env:RELEASE_TAG --repo $env:GH_REPO --pattern $asset --dir $download
+          if ($LASTEXITCODE -ne 0) { throw 'Release asset download failed.' }
+          $zip = Join-Path $download $asset
+          $observed = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash
+          Write-Output "ASSET=$asset TAG=$env:RELEASE_TAG"
+          Write-Output "EXPECTED_SHA256=$env:EXPECTED_SHA256"
+          Write-Output "OBSERVED_SHA256=$observed"
+          if ($observed -ne $env:EXPECTED_SHA256) { throw 'HASH MISMATCH: refusing to execute artifact.' }
+          "RELEASE_ZIP=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: Verify bundled runtime, backend, workers and native EXE
+        env:
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
+        run: |
+          & ./.github/scripts/Test-ReleaseWindows.ps1 -ZipPath $env:RELEASE_ZIP -ExpectedSha256 $env:EXPECTED_SHA256 -EvidenceDirectory "$env:RUNNER_TEMP/release-evidence"
+      - name: Record release gate summary
+        if: always()
+        run: |
+          $result = "$env:RUNNER_TEMP/release-evidence/result.json"
+          if (Test-Path -LiteralPath $result) {
+            '```json' | Out-File $env:GITHUB_STEP_SUMMARY -Append
+            Get-Content -LiteralPath $result | Out-File $env:GITHUB_STEP_SUMMARY -Append
+            '```' | Out-File $env:GITHUB_STEP_SUMMARY -Append
+          }
+          'Native EXE startup is verified separately from backend checks. Interactive visual QA was performed locally. Consumer SmartScreen behavior is not covered by CI.' | Out-File $env:GITHUB_STEP_SUMMARY -Append
+      - name: Preserve release verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: clean-windows-release-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/release-evidence/
+          if-no-files-found: warn
+          retention-days: 30
