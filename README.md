@@ -2,8 +2,8 @@
 
 [![Release](https://img.shields.io/github/v/release/ShaiBeekman/Equation-Matcher?label=release)](https://github.com/ShaiBeekman/Equation-Matcher/releases/latest)
 ![Java](https://img.shields.io/badge/Java-26-orange)
-![Platform](https://img.shields.io/badge/platform-Windows-0078D6)
-[![License](https://img.shields.io/github/license/ShaiBeekman/Equation-Matcher)](https://github.com/ShaiBeekman/Equation-Matcher/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Download](https://img.shields.io/badge/Download-v1.1.1-2ea44f)](https://github.com/ShaiBeekman/Equation-Matcher/releases/download/v1.1.1/Equation-Matcher-v1.1.1-windows.zip)
 
 **A symbolic formula discovery engine built in Java.**
 
