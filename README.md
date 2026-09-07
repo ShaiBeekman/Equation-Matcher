@@ -1,5 +1,10 @@
 # Equation Matcher
 
+[![Release](https://img.shields.io/github/v/release/ShaiBeekman/Equation-Matcher?label=release)](https://github.com/ShaiBeekman/Equation-Matcher/releases/latest)
+![Java](https://img.shields.io/badge/Java-26-orange)
+![Platform](https://img.shields.io/badge/platform-Windows-0078D6)
+[![License](https://img.shields.io/github/license/ShaiBeekman/Equation-Matcher)](https://github.com/ShaiBeekman/Equation-Matcher/blob/main/LICENSE)
+
 **A symbolic formula discovery engine built in Java.**
 
 Equation Matcher searches through numerical expressions, identifies expressions that match a target sequence, and tracks how their terms must change across successive inputs. From those substitution patterns, it attempts to reconstruct a symbolic formula in terms of `n`.
